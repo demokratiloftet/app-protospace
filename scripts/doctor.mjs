@@ -6,6 +6,7 @@ console.log(
 );
 for (const [command, args, required] of [
   ["git", ["--version"], true],
+  ["pnpm", ["--version"], true],
   ["docker", ["compose", "version"], false],
   ["gh", ["--version"], false],
   ["tailscale", ["version"], false],
@@ -17,6 +18,6 @@ for (const [command, args, required] of [
   if (required && r.status !== 0) failed = true;
 }
 console.log(
-  "Local development: npm ci && npm run dev. Docker is optional; Tailscale is needed for the shared private demo.",
+  "Local development: pnpm install --frozen-lockfile && pnpm dev. Docker is optional; Tailscale is needed for the shared private demo.",
 );
 process.exitCode = failed ? 1 : 0;

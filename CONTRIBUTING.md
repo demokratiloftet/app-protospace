@@ -3,7 +3,7 @@
 Lag helst et eget repo fra malen for en ny prototype. Endringer som hjelper alle — oppstartsveiledning, feilrettinger, enklere deploy — hører hjemme her.
 
 1. Lag en branch og gjør en avgrenset endring.
-2. Kjør `npm run check`. Ved Docker-endringer: bygg containeren og kjør `npm run smoke`.
+2. Kjør `pnpm check`. Ved Docker-endringer: bygg containeren og kjør `pnpm smoke`.
 3. Åpne en pull request som beskriver hva som endres og hvordan det er testet.
 4. En ansvarlig vurderer endringen før merge. Bare betrodde vedlikeholdere bør ha skrivetilgang til hovedgrenen.
 

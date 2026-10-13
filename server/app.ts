@@ -1,9 +1,16 @@
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { resolve, extname, sep } from "node:path";
+import { pdsStatus } from "./pds.ts";
 
 export function createApp(
-  options: { publicDir?: string; appName?: string; revision?: string } = {},
+  options: {
+    publicDir?: string;
+    appName?: string;
+    revision?: string;
+    pdsUrl?: string;
+    pdsPublicUrl?: string;
+  } = {},
 ) {
   const publicDir = resolve(options.publicDir ?? "dist/client");
   return createServer(async (req, res) => {
@@ -45,6 +52,15 @@ export function createApp(
             : "Hei fra Løftet! Appen og API-et snakker sammen.",
           app: options.appName ?? "Hello Løftet",
           revision: options.revision ?? "local",
+        });
+        return;
+      }
+      if (url.pathname === "/api/sandbox") {
+        json(200, {
+          pds: {
+            ...(await pdsStatus(options.pdsUrl)),
+            url: options.pdsPublicUrl ?? null,
+          },
         });
         return;
       }

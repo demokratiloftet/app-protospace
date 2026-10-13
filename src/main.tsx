@@ -4,11 +4,26 @@ import "./style.css";
 
 const repo = "https://github.com/demokratiloftet/app-protospace";
 function App() {
+  const [pds, setPds] = useState<"loading" | "ready" | "local" | "error">(
+    "loading",
+  );
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [health, setHealth] = useState<"loading" | "ok" | "error">("loading");
   useEffect(() => {
+    fetch("/api/sandbox")
+      .then((r) => r.json())
+      .then((data) =>
+        setPds(
+          !data.pds.configured
+            ? "local"
+            : data.pds.available
+              ? "ready"
+              : "error",
+        ),
+      )
+      .catch(() => setPds("error"));
     fetch("/health")
       .then((r) => {
         if (!r.ok) throw new Error();
@@ -71,7 +86,11 @@ function App() {
             Les oppstartsveiledningen <span aria-hidden="true">→</span>
           </a>
           <div className="hero-note">
-            Bygg lokalt. Del med teamet. Utvikle videre.
+            {pds === "ready"
+              ? "Felles test-PDS er tilkoblet. Klar for AT Protocol-eksperimenter."
+              : pds === "error"
+                ? "Test-PDS svarer ikke. Du kan fortsatt bygge og bruke appen."
+                : "Bygg lokalt. Del med teamet. Utvikle videre."}
           </div>
         </section>
         <section className="demo" aria-labelledby="demo-title">

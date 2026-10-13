@@ -12,11 +12,12 @@
     "start": "node dist/server/index.js",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.server.json --noEmit",
     "test": "node --test server/*.test.ts",
-    "check": "npm run format:check && npm run typecheck && npm test && npm run build",
+    "check": "pnpm format:check && pnpm typecheck && pnpm test && pnpm build",
     "doctor": "node scripts/doctor.mjs",
     "smoke": "node scripts/smoke.mjs",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "pds:demo": "node scripts/pds-demo.mjs"
   },
   "dependencies": {
     "react": "19.3.0",
@@ -30,5 +31,6 @@
     "prettier": "3.9.10",
     "typescript": "7.0.2",
     "vite": "8.3.4"
-  }
+  },
+  "packageManager": "pnpm@11.8.0"
 }

@@ -1,35 +1,43 @@
-# Fra GitHub til privat app
+# Fra repo til privat HTTPS
 
-## For deltakere
+Hver app får `https://<repo>.hackaton.demokratiloftet.no`. Vi bruker subdomener slik at apper får egne origins og kan bruke `/` uten spesiell frontend-konfigurasjon. Stavemåten `hackaton` er bevisst valgt for dette domenet.
 
-Utvikle lokalt → pull request → review og merge til `main` → grønn CI → privat demo oppdateres. Følg **Actions → Check and deploy** for status. CI-feil stopper deploy; en feil ved helse- eller smoke-test på VPS-en utløser tilbakeføring til forrige image.
+## Deltaker: tre steg
 
-Første gang må en driftsansvarlig registrere appen. Oppgi:
+1. Opprett et **privat repo i demokratiloftet** fra denne malen, med `main` som hovedgren. Bruk små bokstaver, tall og bindestrek i navnet.
+2. Kjør `pnpm install --frozen-lockfile` og `pnpm dev`. Bygg frontend i `src/` og backend i `server/`.
+3. Send repoets navn til driftsansvarlig for engangsregistrering. Etter registrering: push til `main`; GitHub Actions tester, bygger containeren og deployer automatisk. Se **Actions → Check and deploy** for resultatet.
 
-- GitHub-repo i `demokratiloftet`, appnavn og ansvarlig.
-- Hovedgren, normalt `main`.
-- Ressursbehov (standard 0,5 CPU / 256 MiB) og eventuelle secrets.
-- Eventuelt behov for varig lagring, intern tjenestetilgang eller eksterne API-er.
+Det er samme flyt for en ren backend: behold containerport 3000 og `GET /health`. Startmalen er Node-basert; andre runtime-profiler må godkjennes særskilt.
 
-Malen bruker containerport 3000 og `GET /health`. Den har ingen database. Databasemigrering er ikke del av automatisk deploy.
+Deltakere trenger GitHub-tilgang og tilgang til Tailscale-nettverket for å åpne appene. De trenger ikke SSH, Docker-tilgang på VPS-en, DNS-nøkler eller PDS-administratorpassord. Lokalt arbeid krever ikke Tailscale.
 
-## For driftsansvarlig
+## Operatør: én registreringskommando
 
-Følg [deploy/SANDBOX.md](https://github.com/demokratiloftet/server-infrastructure/blob/feat/loft-98-protospace/deploy/SANDBOX.md) i server-infrastructure. Endringen ligger i [PR #6](https://github.com/demokratiloftet/server-infrastructure/pull/6). Godkjent topologi installeres under `/etc/loftet-deploy/apps/REPO/`; kilden i apprepoet kan ikke endre den ved deploy.
+Fra det gjennomgåtte `server-infrastructure`-repoet:
 
-Repoet trenger disse GitHub-innstillingene etter vellykket førstegangsoppsett:
+```sh
+python3 deploy/register.py mitt-appnavn --identity ~/.ssh/hostinger
+```
 
-| Type     | Navn                      | Innhold                                             |
-| -------- | ------------------------- | --------------------------------------------------- |
-| Variable | `DEMO_DEPLOY_ENABLED`     | `true` først etter bootstrap og tilgangstest        |
-| Variable | `DEMO_DEPLOY_HOST`        | Verifisert adresse til VPS-ens SSH-endepunkt        |
-| Secret   | `DEMO_DEPLOY_SSH_KEY`     | Egen nøkkel begrenset til `loftet-deploy REPO`      |
-| Secret   | `DEMO_DEPLOY_KNOWN_HOSTS` | SSH-vertsnøkkel fra allerede verifisert forbindelse |
+Forutsetninger: GitHub CLI med administratortilgang til apprepoet, verifisert SSH-hostnøkkel, installert deploymottaker og klargjort hackathon-infrastruktur. Kommandoen reserverer port, oppretter fast topologi, deployer første commit, setter begrenset triggernøkkel i GitHub og starter CI. Den nekter å overskrive en eksisterende registrering.
 
-GitHub Actions sender et kortlevd, repoavgrenset `contents:read`-token over den begrensede SSH-forbindelsen. VPS-en trenger ikke en permanent GitHub-token. Deploynøkkelen gir ingen interaktiv shell, portvideresending eller filopplasting.
+[Operatørveiledning og bootstrap](https://github.com/demokratiloftet/server-infrastructure/blob/feat/loft-98-protospace/deploy/SANDBOX.md). Infrastrukturendringene ligger foreløpig i [PR #6](https://github.com/demokratiloftet/server-infrastructure/pull/6).
 
-Denne første versjonen bruker dagens SSH-transport til serveren for CI. Apptrafikken er privat via Tailscale. Vi har ikke lagt til en ny Tailscale-identitet i GitHub Actions eller en runner på VPS-en.
+## Hva er automatisk?
 
-Serveren godtar bare hovedgrenens gjeldende fulle commit-SHA, bygger uten runtime-secrets og oppdaterer bare appen. En global deploylås hindrer samtidige bygg/utrullinger. Endringer i blant annet `deploy/`, `infra/` og Compose-filer krever operatøroppsett; en rød deployjobb på slike endringer er forventet.
+- CI bruker pnpm med låste avhengigheter og tester produksjonscontaineren.
+- Deploymottakeren godtar bare eksakt commit på registrert hovedgren.
+- Apper kjører med fast, operatørstyrt nettverk og ressursgrenser; appens Compose-fil brukes ikke på VPS-en.
+- Feilet oppstart eller helsesjekk gjenoppretter forrige image.
+- Nye commits endrer ikke DNS, publisering, administratornøkler eller delt infrastruktur.
 
-Pause: sett `DEMO_DEPLOY_ENABLED=false`. Vanlig tilbakeføring: revert endringen, merge og la CI deploye. Umiddelbar operatørtilbakeføring bruker forrige image fra `/var/lib/loftet-deploy/REPO/current.json`; følg infrastrukturens runbook. Ikke slett datavolumer eller kjør `down -v` på delt infrastruktur.
+Første registrering krever gjennomgang av koden og Dockerfile. Dette er en sandkasse for kjente deltakere med betrodd skrivetilgang, ikke en tjeneste for å kjøre vilkårlig fiendtlig kode. Containerbygg skjer fortsatt på den delte VPS-en, serialisert med andre deployer; store bygg bør flyttes til egne byggemaskiner før videre skalering.
+
+Persistent lagring, databaseendringer og ekstra bakgrunnstjenester er operatøroppgaver. `/tmp` er liten og midlertidig. Appen kan kun kontakte den delte test-PDS-en gjennom en fast proxy; annen utgående trafikk må avtales.
+
+## Tilgang og publisering
+
+HTTPS er privat gjennom Tailscale, selv om DNS-navnet kan slås opp offentlig. Det er en separat test-PDS med egne data, nøkler og invitasjoner. Se [PDS-integrasjon](integrations.md).
+
+Offentlig tilgang er en **egen operatørendring** i den eksisterende offentlige gatewayen og DNS, ikke et flagg deltakeren kan sette i repoet. [Publiseringsprosedyre](public-apps.md). Automatisk offentlig publisering inngår ikke i denne versjonen.

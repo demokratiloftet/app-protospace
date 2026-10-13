@@ -17,12 +17,12 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version-file: .node-version
-          cache: npm
-      - run: npm ci
-      - run: npm audit --audit-level=high
-      - run: npm run check
+      - run: npm install --global pnpm@11.8.0
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm audit --audit-level=high
+      - run: pnpm check
       - run: docker compose up -d --build --wait
-      - run: npm run smoke
+      - run: pnpm smoke
       - if: always()
         run: docker compose down
   deploy:

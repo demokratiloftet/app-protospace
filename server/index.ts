@@ -5,6 +5,8 @@ if (!Number.isInteger(port) || port < 1 || port > 65535)
   throw new Error("Invalid PORT");
 const host = process.env.HOST ?? "127.0.0.1";
 const server = createApp({
+  pdsUrl: process.env.PDS_URL,
+  pdsPublicUrl: process.env.PDS_PUBLIC_URL,
   appName: process.env.APP_NAME,
   revision: process.env.APP_REVISION,
 });
