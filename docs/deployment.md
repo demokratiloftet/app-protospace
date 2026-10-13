@@ -14,11 +14,17 @@ Deltakere trenger GitHub-tilgang og tilgang til Tailscale-nettverket for å åpn
 
 ## Operatør: én registreringskommando
 
+**Kun driftsansvarlig kjører denne kommandoen**, én gang per app. Deltakeren oppgir repoets navn og trenger ingen SSH-nøkkel.
+
 Fra det gjennomgåtte `server-infrastructure`-repoet:
 
 ```sh
-python3 deploy/register.py mitt-appnavn --identity ~/.ssh/hostinger
+python3 deploy/register.py mitt-appnavn --identity /sti/til/din/operator-ssh-nokkel
 ```
+
+Nøkkelstien er et eksempel: bruk driftsansvarliges eksisterende, lokale SSH-nøkkel. Den blir på operatørens maskin og lastes aldri opp til GitHub. Skriptet lager en annen, separat deploynøkkel for hver app; den kan bare starte deploy av den registrerte appen. Ikke del operatørnøkkelen med deltakere.
+
+Når bare én person har operatørtilgang, må nye apper registreres av den personen. Vanlige kodeoppdateringer går deretter automatisk; selvbetjent førstegangsregistrering inngår ikke i denne versjonen.
 
 Forutsetninger: GitHub CLI med administratortilgang til apprepoet, verifisert SSH-hostnøkkel, installert deploymottaker og klargjort hackathon-infrastruktur. Kommandoen reserverer port, oppretter fast topologi, deployer første commit, setter begrenset triggernøkkel i GitHub og starter CI. Den nekter å overskrive en eksisterende registrering.
 
