@@ -1,10 +1,6 @@
 import { spawn } from "node:child_process";
 const children = [
-  spawn(
-    process.execPath,
-    ["--watch", "--experimental-transform-types", "server/dev.ts"],
-    { stdio: "inherit" },
-  ),
+  spawn(process.execPath, ["--watch", "server/dev.ts"], { stdio: "inherit" }),
   spawn(process.execPath, ["node_modules/vite/bin/vite.js"], {
     stdio: "inherit",
   }),

@@ -15,7 +15,7 @@ Malen bruker containerport 3000 og `GET /health`. Den har ingen database. Databa
 
 ## For driftsansvarlig
 
-Følg `deploy/SANDBOX.md` i [server-infrastructure](https://github.com/demokratiloftet/server-infrastructure). Godkjent topologi installeres under `/etc/loftet-deploy/apps/REPO/`; kilden i apprepoet kan ikke endre den ved deploy.
+Følg [deploy/SANDBOX.md](https://github.com/demokratiloftet/server-infrastructure/blob/feat/loft-98-protospace/deploy/SANDBOX.md) i server-infrastructure. Endringen ligger i [PR #6](https://github.com/demokratiloftet/server-infrastructure/pull/6). Godkjent topologi installeres under `/etc/loftet-deploy/apps/REPO/`; kilden i apprepoet kan ikke endre den ved deploy.
 
 Repoet trenger disse GitHub-innstillingene etter vellykket førstegangsoppsett:
 

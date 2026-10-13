@@ -12,7 +12,7 @@
     "start": "node dist/server/index.js",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.server.json --noEmit",
     "test": "node --test server/*.test.ts",
-    "check": "npm run typecheck && npm test && npm run build",
+    "check": "npm run format:check && npm run typecheck && npm test && npm run build",
     "doctor": "node scripts/doctor.mjs",
     "smoke": "node scripts/smoke.mjs",
     "format": "prettier --write .",

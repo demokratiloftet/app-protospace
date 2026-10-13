@@ -31,6 +31,8 @@ En kopi av malen har **deploy avslått**: GitHub kopierer ikke repoets secrets e
 
 ## Privat eksempelapp
 
+**[Åpne Hello Løftet](https://app-protospace.dev.demokratiloftet.no)** — krever Tailscale-tilgang.
+
 Adresse og verifisert deploystatus finnes i [leveransenotatet](docs/verification.md). Du må være tilkoblet Demokratiløftets Tailscale-nettverk og ha tilgang til VPS-noden. [Tilgang og feilsøking](docs/tailscale.md).
 
 Navnet du sender til eksempel-API-et returneres i svaret; appen lagrer det ikke og logger ikke forespørsler. Bruk syntetiske data når du videreutvikler prototypen. Privat nettverk erstatter ikke innlogging og datatilgangskontroll når du legger til faktiske brukerdata.
