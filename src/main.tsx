@@ -77,8 +77,8 @@ function App() {
             <br />A running <em>app.</em>
           </h1>
           <p className="intro">
-            Build your prototype with React and Node.js. Start locally, then
-            share a working app on our hackathon server.
+            A starting point for your AT Protocol app. Build with React and
+            Node.js, connect a PDS, and experiment with shared records.
           </p>
           <a className="primary" href={`${repo}/generate`}>
             Create your app <span aria-hidden="true">↗</span>
@@ -88,10 +88,12 @@ function App() {
           </a>
           <div className="hero-note">
             {pds === "ready"
-              ? "Shared test PDS connected. Ready for AT Protocol experiments."
+              ? "PDS is reachable. Run pnpm pds:demo with a test account to try a real record."
               : pds === "error"
-                ? "Test PDS unavailable. You can still build and use your app."
-                : "Build locally. Share with your team. Keep improving."}
+                ? "Could not reach the PDS. Check PDS_URL and your network, then reload."
+                : pds === "local"
+                  ? "PDS not configured. Add PDS_URL to .env and restart pnpm dev to connect one."
+                  : "Checking PDS connection…"}
           </div>
         </section>
         <section className="demo" aria-labelledby="demo-title">
@@ -110,10 +112,10 @@ function App() {
             <span className="hello-art" aria-hidden="true">
               hi<span>↗</span>
             </span>
-            <h2 id="demo-title">Try your first connection.</h2>
+            <h2 id="demo-title">Try your local API.</h2>
             <p>
-              Send a greeting from your browser to the API. A small starting
-              point for the app you want to build.
+              Send a greeting from your browser to the Node API. This local
+              example does not write to a PDS or require an account.
             </p>
             <form onSubmit={greet}>
               <label htmlFor="name">
@@ -156,13 +158,13 @@ function App() {
             ],
             [
               "02",
-              "Build and test.",
-              "Add a screen, an API or a PDS integration. Test your changes and push them to GitHub.",
+              "Try AT Protocol.",
+              "Choose a PDS and a test account. The record example writes, reads and removes a note; adapt it to your idea.",
             ],
             [
               "03",
               "Share a running app.",
-              "Ask Edvin to register your app once. After that, pushes to main automatically test and deploy it. Access uses Tailscale.",
+              "Build in your own repository, invite your teammates, and host where you prefer. Ask Edvin if you want help with hackathon hosting.",
             ],
           ].map(([number, title, text]) => (
             <article key={number}>

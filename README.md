@@ -1,82 +1,58 @@
 # App Protospace
 
-**English: [Hackathon quickstart and hosting guide](docs/HACKATHON.md).**
+A small **React + TypeScript + Node.js** starter for building on **AT Protocol**. Start with a working UI and API, then use the included record example to connect your own idea to a Personal Data Server (PDS).
 
-En liten idé. En kjørende app. Startmal for apper og API-er i Demokratiløftets utviklingssandkasse — [LOFT-98](https://devotta.atlassian.net/browse/LOFT-98).
+## Start locally
 
-**React + TypeScript + Node.js**, med lokal utvikling, Docker, GitHub Actions og privat deploy via Tailscale. Dette offentlige repoet er både malen og eksempelappen **Hello Løftet**. Den delte eksempelappen og test-PDS-en krever fortsatt Tailscale-tilgang. Ingen database, kontoer eller eksterne API-er trengs for å starte.
+Use **Node.js 24.17.0** (see `.node-version`) and **pnpm 11.8.0**. If needed, install pnpm with `npm install --global pnpm@11.8.0`.
 
-## Kom i gang
+1. Select **Use this template → Create a new repository** on [GitHub](https://github.com/demokratiloftet/app-protospace). Choose your own account or organisation, then clone your new repository.
+2. From that directory, run:
 
-Du trenger Git og Node.js **24.17.0** (se `.node-version`). Installer pnpm **11.8.0** med `npm install --global pnpm@11.8.0`. Docker er valgfritt for lokal utvikling.
+   ```sh
+   pnpm install
+   pnpm dev
+   ```
 
-```sh
-git clone https://github.com/demokratiloftet/app-protospace.git
-cd app-protospace
-pnpm install --frozen-lockfile
-pnpm doctor
-pnpm dev
-```
+3. Open **http://127.0.0.1:5173**. Edit `src/main.tsx` and see your changes immediately. The Node API runs at http://127.0.0.1:3000 and restarts when its code changes. Ctrl+C stops both.
 
-Åpne **http://127.0.0.1:5173**. Frontend har automatisk oppdatering; API-et kjører på loopback-port 3000. Stopp begge med Ctrl+C.
+No Docker, hosting account, PDS account or Tailscale access is needed for this step. `pnpm doctor` checks your local tools. If the ports are taken, use `DEV_PORT=5174 API_PORT=3001 pnpm dev`.
 
-Endre `src/main.tsx` for å bygge din visning og `server/app.ts` for å legge til API-ruter. Eksempelet bruker `GET /api/hello?name=Nora` og `GET /health`.
+## What works out of the box?
 
-## Lag din egen app
+| Included                        | What it does                                                                                             |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| React UI and Node API           | A local greeting example demonstrates a browser-to-backend request.                                      |
+| PDS connection check            | Set `PDS_URL` in `.env` and restart; the page checks whether that PDS is reachable.                      |
+| Real AT Protocol record example | With a test account and app password, `pnpm pds:demo` writes, reads and deletes a note on your PDS.      |
+| Checks and production build     | `pnpm check` runs formatting checks, types, tests and the build. Docker and GitHub Actions are included. |
 
-1. Velg **Use this template → Create a new repository** på GitHub. Bruk `main` som hovedgren og velg et nytt appnavn.
-2. Klon det nye repoet og kjør kommandoene over. Endre `name` i `package.json` og kjør `pnpm install --lockfile-only`. Tilpass tittel, tekst og repo-lenken i `src/main.tsx`.
-3. Bygg appen og lever endringer med pull requests. `pnpm check` kjører typesjekk, HTTP-tester og produksjonsbygg.
-4. Be driftsansvarlig registrere repoet for delt deploy. Oppgi navn, ansvarlig og eventuelle behov for lagring eller tjenester. [Deployveiledning](docs/deployment.md).
+Starting the app **does not create a PDS, create an account or sign you in**. The page's PDS status is a reachability check. Browser sign-in/OAuth, a feed/indexer and an app database are not implemented.
 
-En kopi av malen har **deploy avslått**: GitHub kopierer ikke repoets secrets eller variabler. Den kan trygt kjøre CI før den er registrert på VPS-en.
-
-## Privat eksempelapp
-
-**[Åpne Hello Løftet](https://app-protospace.hackaton.demokratiloftet.no)** — krever Tailscale-tilgang.
-
-Adresse og verifisert deploystatus finnes i [leveransenotatet](docs/verification.md). Du må være tilkoblet Demokratiløftets Tailscale-nettverk og ha tilgang til VPS-noden. [Tilgang og feilsøking](docs/tailscale.md).
-
-Navnet du sender til eksempel-API-et returneres i svaret; appen lagrer det ikke og logger ikke forespørsler. Bruk syntetiske data når du videreutvikler prototypen. Privat nettverk erstatter ikke innlogging og datatilgangskontroll når du legger til faktiske brukerdata.
-
-## Produksjonsbygg lokalt
+## Try your first AT Protocol record
 
 ```sh
-pnpm check
-pnpm start
-# I et annet terminalvindu:
-pnpm smoke
+cp .env.example .env
+# Edit .env: set PDS_URL, PDS_IDENTIFIER and PDS_APP_PASSWORD.
+pnpm pds:demo
 ```
 
-Eller med Docker (stopp `pnpm dev` / `pnpm start` først hvis port 3000 er opptatt):
+Use the PDS that actually hosts your test account and an app password from that account. `.env` is ignored by Git; `pnpm dev`, `pnpm start` and `pnpm pds:demo` load it. Existing shell variables take precedence. Restart after changing it.
 
-```sh
-docker compose up -d --build --wait
-pnpm smoke
-docker compose down
-```
+The example prints the record's `at://` address, verifies its contents and removes it. Read [Connecting a PDS](docs/integrations.md) for account choices, the data flow and how to build on the example.
 
-Åpne http://127.0.0.1:3000. Lokal Compose er en loopback-preview med vanlig utgående nettverk. Den godkjente VPS-topologien bruker et eget internt nettverk; Compose-filen i dette repoet brukes ikke direkte på VPS-en.
+## Make it yours
 
-## Hva ligger hvor?
+| File                            | Start here                                                                                                              |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `src/main.tsx`, `src/style.css` | Replace the example screen with your app.                                                                               |
+| `server/app.ts`                 | Add your backend routes. The starter accepts GET/HEAD only; add request validation and authentication for write routes. |
+| `scripts/pds-demo.mjs`          | Follow the login → write → read → delete example.                                                                       |
+| `.env.example`                  | Document your app's configuration without credentials.                                                                  |
+| `index.html`, `package.json`    | Change the title, metadata and package name. Also replace the repository links in `src/main.tsx`.                       |
 
-| Sted                                                                              | Ansvar                                                     |
-| --------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| `src/`                                                                            | React-grensesnitt og CSS                                   |
-| `server/`                                                                         | Lite Node HTTP-API, statiske filer og HTTP-tester          |
-| `scripts/`                                                                        | Lokal oppstart, verktøysjekk og smoke-test                 |
-| `.github/workflows/check.yml`                                                     | CI og deploy av kontrollert commit                         |
-| `Dockerfile`, `compose.yaml`                                                      | Produksjonsimage og lokal containerpreview                 |
-| [server-infrastructure](https://github.com/demokratiloftet/server-infrastructure) | Operatørstyrt VPS-topologi, registrering og deploymottaker |
-| [local-sandbox](https://github.com/demokratiloftet/local-sandbox)                 | Valgfri lokal AT Protocol-test med syntetiske kontoer      |
+The PDS stores AT Protocol records; your app supplies its own interface and behaviour. Apps can share data when they understand the same record format. This starter's temporary note is an experiment, not a published interoperable schema.
 
-## Videre utvikling
+[Hackathon guide](docs/HACKATHON.md) · [PDS guide](docs/integrations.md) · [Build and hosting](docs/deployment.md) · [Contributing](CONTRIBUTING.md)
 
-- **Bare API:** behold `server/` og tilpass frontend eller fjern den og tilhørende byggesteg. Behold `/health` og containerport 3000.
-- **AT Protocol:** bruk `local-sandbox` lokalt og les [integrasjonsnotatet](docs/integrations.md). Registrerte apper får automatisk forbindelse til den separate, delte test-PDS-en. Testkonto opprettes av driftsansvarlig.
-- **Database / worker / biblioteker:** ikke ferdige maler i v0.1. Persistent lagring, migreringer og jobber trenger eget oppsett; gjenbrukbare pakker publiseres separat fra appdeploy.
-- **Offentlig app:** se [publiseringsprosedyren](docs/public-apps.md). Et app-merge gjør aldri en app offentlig.
-
-Se [CONTRIBUTING.md](CONTRIBUTING.md) for bidragsflyt. Kildekoden er offentlig; dette gir ikke tilgang til den private demoen, testkontoer eller deploy. Registrering på Demokratiløftets VPS er fortsatt en operatøroppgave.
-
-Repoet har foreløpig ingen LICENSE-fil. Lisensvalg er ikke avklart.
+License: a reuse license has not yet been selected; there is currently no `LICENSE` file.

@@ -7,17 +7,17 @@
     "node": ">=24.17.0 <25"
   },
   "scripts": {
-    "dev": "node scripts/dev.mjs",
+    "dev": "node --env-file-if-exists=.env scripts/dev.mjs",
     "build": "tsc -p tsconfig.server.json && vite build",
-    "start": "node dist/server/index.js",
+    "start": "node --env-file-if-exists=.env dist/server/index.js",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.server.json --noEmit",
-    "test": "node --test server/*.test.ts",
+    "test": "node --test server/*.test.ts scripts/*.test.mjs",
     "check": "pnpm format:check && pnpm typecheck && pnpm test && pnpm build",
     "doctor": "node scripts/doctor.mjs",
     "smoke": "node scripts/smoke.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "pds:demo": "node scripts/pds-demo.mjs"
+    "pds:demo": "node --env-file-if-exists=.env scripts/pds-demo.mjs"
   },
   "dependencies": {
     "react": "19.3.0",
