@@ -2,7 +2,7 @@
 
 En liten idé. En kjørende app. Startmal for apper og API-er i Demokratiløftets utviklingssandkasse — [LOFT-98](https://devotta.atlassian.net/browse/LOFT-98).
 
-**React + TypeScript + Node.js**, med lokal utvikling, Docker, GitHub Actions og privat deploy via Tailscale. Dette repoet er både malen og eksempelappen **Hello Løftet**. Ingen database, kontoer eller eksterne API-er trengs for å starte.
+**React + TypeScript + Node.js**, med lokal utvikling, Docker, GitHub Actions og privat deploy via Tailscale. Dette offentlige repoet er både malen og eksempelappen **Hello Løftet**. Den delte eksempelappen og test-PDS-en krever fortsatt Tailscale-tilgang. Ingen database, kontoer eller eksterne API-er trengs for å starte.
 
 ## Kom i gang
 
@@ -75,4 +75,6 @@ docker compose down
 - **Database / worker / biblioteker:** ikke ferdige maler i v0.1. Persistent lagring, migreringer og jobber trenger eget oppsett; gjenbrukbare pakker publiseres separat fra appdeploy.
 - **Offentlig app:** se [publiseringsprosedyren](docs/public-apps.md). Et app-merge gjør aldri en app offentlig.
 
-Se [CONTRIBUTING.md](CONTRIBUTING.md) for bidragsflyt. Repoet opprettes privat; eventuell offentlig kildekode og lisensvalg avgjøres separat av prosjektet.
+Se [CONTRIBUTING.md](CONTRIBUTING.md) for bidragsflyt. Kildekoden er offentlig; dette gir ikke tilgang til den private demoen, testkontoer eller deploy. Registrering på Demokratiløftets VPS er fortsatt en operatøroppgave.
+
+Repoet har foreløpig ingen LICENSE-fil. Lisensvalg er ikke avklart.

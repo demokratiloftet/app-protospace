@@ -1,6 +1,6 @@
 # Verifisert leveranse – 13. oktober 2026
 
-- Kildemal: [app-protospace](https://github.com/demokratiloftet/app-protospace), privat GitHub template-repo.
+- Kildemal: [app-protospace](https://github.com/demokratiloftet/app-protospace), GitHub template-repo (privat ved denne verifikasjonen; senere offentliggjort).
 - Første pnpm/PDS-release: `86eac49f412ef4dc0501848e5d3bf7f3403f2688`; [CI og deploy](https://github.com/demokratiloftet/app-protospace/actions/runs/38442838147) bestått.
 - En ny instans ble opprettet fra malen: [hackathon-hello](https://github.com/demokratiloftet/hackathon-hello). Registrert med én operatørkommando, uten manuell Compose-/DNS-/secret-konfigurasjon for appen.
 - Infrastrukturforslaget er [PR #6](https://github.com/demokratiloftet/server-infrastructure/pull/6), fortsatt åpent. Det gjennomgåtte oppsettet er installert på VPS-en.
