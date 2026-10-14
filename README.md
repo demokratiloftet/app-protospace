@@ -1,5 +1,7 @@
 # App Protospace
 
+**English: [Hackathon quickstart and hosting guide](docs/HACKATHON.md).**
+
 En liten idé. En kjørende app. Startmal for apper og API-er i Demokratiløftets utviklingssandkasse — [LOFT-98](https://devotta.atlassian.net/browse/LOFT-98).
 
 **React + TypeScript + Node.js**, med lokal utvikling, Docker, GitHub Actions og privat deploy via Tailscale. Dette offentlige repoet er både malen og eksempelappen **Hello Løftet**. Den delte eksempelappen og test-PDS-en krever fortsatt Tailscale-tilgang. Ingen database, kontoer eller eksterne API-er trengs for å starte.
