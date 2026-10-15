@@ -39,7 +39,7 @@ pnpm pds:demo
 
 Use the PDS that actually hosts your test account and an app password from that account. `.env` is ignored by Git; `pnpm dev`, `pnpm start` and `pnpm pds:demo` load it. Existing shell variables take precedence. Restart after changing it.
 
-Choose the shared hackathon PDS, [a local sandbox with fixture accounts](docs/integrations.md#run-the-local-sandbox-instead), or your own PDS/provider. The shared PDS needs Tailscale access; the local sandbox needs Docker and access to its separate private repository. Neither is required to start the UI and API.
+Choose the shared hackathon PDS, [a local sandbox with fixture accounts](docs/integrations.md#run-the-local-sandbox-instead), or your own PDS/provider. The shared PDS needs Tailscale access; the local sandbox needs Docker and Node.js and can be cloned from its public repository. Neither is required to start the UI and API.
 
 The example prints the record's `at://` address, verifies its contents and removes it. Read [Connecting a PDS](docs/integrations.md) for account choices, the data flow and how to build on the example.
 

@@ -13,7 +13,7 @@ Bring any idea: events, sports, a reading list, a community tool, or something e
 ## Choose where your test data lives
 
 - **Shared hackathon PDS:** ask Edvin for a test account and Tailscale access. This is the suggested starting point if you want to avoid setting up a PDS yourself.
-- **Local sandbox:** run a PDS and fixture accounts on your laptop using Docker. No Tailscale needed; accounts and records reset on restart. The separate `local-sandbox` repository currently requires GitHub access from Edvin. [Setup commands](integrations.md#run-the-local-sandbox-instead).
+- **Local sandbox:** run a PDS and fixture accounts on your laptop using Docker. No Tailscale needed; accounts and records reset on restart. The separate [`local-sandbox` repository](https://github.com/demokratiloftet/local-sandbox) is public; clone it directly. [Setup commands](integrations.md#run-the-local-sandbox-instead).
 - **Your own PDS/provider:** use a test account on the PDS you already use.
 
 All three work with the template's configurable PDS connection and record example. Using our shared service is optional. Moving from local to shared does not transfer accounts or data automatically.
@@ -28,4 +28,4 @@ The starter includes a command-line record example. It does not include the spor
 
 Keep your code in your team's repository and use whichever hosting works for you. If you want help running the app on the hackathon VPS, give Edvin the repository link and mention any database, external API or background-job needs. Hosting is arranged separately; creating a repository does not deploy it automatically.
 
-The shared demo environment currently requires [Tailscale access](tailscale.md). Local development and other hosting do not.
+Direct access to the shared test PDS requires [Tailscale access](tailscale.md). Apps explicitly published on public HTTPS can be visited without Tailscale. Local development with the sandbox also needs no Tailscale access.

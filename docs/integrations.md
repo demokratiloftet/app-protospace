@@ -9,7 +9,7 @@ Choose whichever fits your project. The template does not require the shared ser
 | Option                    | What you need                                                                           | Good for                                                   |
 | ------------------------- | --------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
 | Shared hackathon test PDS | A test account from Edvin and [Tailscale access](tailscale.md); no local Docker needed. | A quick start and experiments between teammates' apps.     |
-| Local sandbox             | Docker with Compose, Node.js and access to the separate `local-sandbox` repository.     | Independent experiments with disposable accounts and data. |
+| Local sandbox             | Docker with Compose, Node.js and the public `local-sandbox` repository.                 | Independent experiments with disposable accounts and data. |
 | Your own PDS or provider  | A test account and app password on a PDS you can reach.                                 | Continuing with your existing setup.                       |
 
 For the shared service, use `https://pds.hackaton.demokratiloftet.no`. This is a private test environment; do not assume its identities or records are available on the public network. Each team can use a separate test account. Apps do not need to use the same PDS to interoperate: they need to locate the relevant records and understand the same format.
@@ -20,7 +20,7 @@ Use synthetic test data. Records on a public PDS are generally publicly readable
 
 ### Run the local sandbox instead
 
-[`local-sandbox`](https://github.com/demokratiloftet/local-sandbox) is a separate Docker environment containing a real PDS, a local PLC identity directory and two synthetic accounts. It is currently a private repository: ask Edvin for GitHub access first. The app template itself remains public.
+[`local-sandbox`](https://github.com/demokratiloftet/local-sandbox) is a separate Docker environment containing a real PDS, a local PLC identity directory and two synthetic accounts. The repository is public: clone it directly, with no GitHub invitation or Tailscale access needed.
 
 With Docker running and Node.js 24.17.0 installed, run these commands in a separate directory from your app:
 
