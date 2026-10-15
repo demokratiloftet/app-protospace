@@ -57,4 +57,6 @@ The PDS stores AT Protocol records; your app supplies its own interface and beha
 
 [Hackathon guide](docs/HACKATHON.md) · [PDS guide](docs/integrations.md) · [Build and hosting](docs/deployment.md) · [Contributing](CONTRIBUTING.md)
 
-License: a reuse license has not yet been selected; there is currently no `LICENSE` file.
+## License
+
+Licensed under [MIT](LICENSE).
