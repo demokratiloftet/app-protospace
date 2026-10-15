@@ -1,14 +1,13 @@
-# Bidra
+# Contributing
 
-Lag helst et eget repo fra malen for en ny prototype. Endringer som hjelper alle — oppstartsveiledning, feilrettinger, enklere deploy — hører hjemme her.
+For a new app, create your own repository from this template and invite your collaborators there. You do not need write access to this repository to build an app.
 
-1. Lag en branch og gjør en avgrenset endring.
-2. Kjør `pnpm check`. Ved Docker-endringer: bygg containeren og kjør `pnpm smoke`.
-3. Åpne en pull request som beskriver hva som endres og hvordan det er testet.
-4. En ansvarlig vurderer endringen før merge. Bare betrodde vedlikeholdere bør ha skrivetilgang til hovedgrenen.
+For improvements to the template:
 
-CI bygger og tester pull requests uten deploynøkkel. Når deploy er aktivert, publiserer en vellykket hovedgren-kjøring bare dette repoets godkjente app. Nettverk, secrets, Compose-topologi og nye datatjenester håndteres av driftsansvarlig i server-infrastructure.
+1. Create a branch (or fork the repository) and make a focused change.
+2. Run `pnpm check`. For runtime or container changes, also run `docker compose up -d --build --wait`, `pnpm smoke` and `docker compose down`.
+3. Open a pull request explaining the change and how you tested it.
 
-Kontroller hvilke branch protection-funksjoner GitHub-abonnementet støtter. CODEOWNERS alene håndhever ikke review. Hovedgren-skrivetilgang innebærer tillit til å endre kjørende kode.
+Keep the default `pnpm install` / `pnpm dev` experience usable without credentials or private network access. Document optional configuration in `.env.example`. Keep credentials, `.env`, account files and personal data out of commits.
 
-Ikke legg persondata, `.env`, private nøkler eller testkontoer med reelle passord i repoet. Oppgi nødvendige variabelnavn i `.env.example`, uten verdier. Rotér en lekket nøkkel; sletting fra siste commit er ikke tilstrekkelig.
+The template's documentation should help people build AT Protocol apps. Keep infrastructure runbooks and event-specific operating notes in the infrastructure repository.

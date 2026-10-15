@@ -1,49 +1,32 @@
-# Fra repo til privat HTTPS
+# Build and share your app
 
-Hver app får `https://<repo>.hackaton.demokratiloftet.no`. Vi bruker subdomener slik at apper får egne origins og kan bruke `/` uten spesiell frontend-konfigurasjon. Stavemåten `hackaton` er bevisst valgt for dette domenet.
-
-## Deltaker: tre steg
-
-1. Opprett et **privat repo i demokratiloftet** fra denne malen, med `main` som hovedgren. Bruk små bokstaver, tall og bindestrek i navnet.
-2. Kjør `pnpm install --frozen-lockfile` og `pnpm dev`. Bygg frontend i `src/` og backend i `server/`.
-3. Send repoets navn til driftsansvarlig for engangsregistrering. Etter registrering: push til `main`; GitHub Actions tester, bygger containeren og deployer automatisk. Se **Actions → Check and deploy** for resultatet.
-
-Det er samme flyt for en ren backend: behold containerport 3000 og `GET /health`. Startmalen er Node-basert; andre runtime-profiler må godkjennes særskilt.
-
-Deltakere trenger GitHub-tilgang og tilgang til Tailscale-nettverket for å åpne appene. De trenger ikke SSH, Docker-tilgang på VPS-en, DNS-nøkler eller PDS-administratorpassord. Lokalt arbeid krever ikke Tailscale.
-
-## Operatør: én registreringskommando
-
-**Kun driftsansvarlig kjører denne kommandoen**, én gang per app. Deltakeren oppgir repoets navn og trenger ingen SSH-nøkkel.
-
-Fra det gjennomgåtte `server-infrastructure`-repoet:
+## Preview the production build
 
 ```sh
-python3 deploy/register.py mitt-appnavn --identity /sti/til/din/operator-ssh-nokkel
+pnpm check
+pnpm start
+# In another terminal:
+pnpm smoke
 ```
 
-Nøkkelstien er et eksempel: bruk driftsansvarliges eksisterende, lokale SSH-nøkkel. Den blir på operatørens maskin og lastes aldri opp til GitHub. Skriptet lager en annen, separat deploynøkkel for hver app; den kan bare starte deploy av den registrerte appen. Ikke del operatørnøkkelen med deltakere.
+Open http://127.0.0.1:3000. Stop `pnpm dev` first if it is using that API port. `pnpm start` loads your optional `.env` file.
 
-Når bare én person har operatørtilgang, må nye apper registreres av den personen. Vanlige kodeoppdateringer går deretter automatisk; selvbetjent førstegangsregistrering inngår ikke i denne versjonen.
+## Preview with Docker
 
-Forutsetninger: GitHub CLI med administratortilgang til apprepoet, verifisert SSH-hostnøkkel, installert deploymottaker og klargjort hackathon-infrastruktur. Kommandoen reserverer port, oppretter fast topologi, deployer første commit, setter begrenset triggernøkkel i GitHub og starter CI. Den nekter å overskrive en eksisterende registrering.
+```sh
+docker compose up -d --build --wait
+pnpm smoke
+docker compose down
+```
 
-[Operatørveiledning og bootstrap](https://github.com/demokratiloftet/server-infrastructure/blob/feat/loft-98-protospace/deploy/SANDBOX.md). Infrastrukturendringene ligger foreløpig i [PR #6](https://github.com/demokratiloftet/server-infrastructure/pull/6).
+Docker is optional. If port 3000 is busy, use `LOCAL_PORT=3001 docker compose up -d --build --wait` and `APP_URL=http://127.0.0.1:3001 pnpm smoke`.
 
-## Hva er automatisk?
+The local Compose preview does not pass your `.env` PDS settings or credentials into the container. Configure runtime environment variables explicitly when hosting an app. The image contains the compiled UI and API; it does not contain `.env` or the command-line PDS demo.
 
-- CI bruker pnpm med låste avhengigheter og tester produksjonscontaineren.
-- Deploymottakeren godtar bare eksakt commit på registrert hovedgren.
-- Apper kjører med fast, operatørstyrt nettverk og ressursgrenser; appens Compose-fil brukes ikke på VPS-en.
-- Feilet oppstart eller helsesjekk gjenoppretter forrige image.
-- Nye commits endrer ikke DNS, publisering, administratornøkler eller delt infrastruktur.
+## Hosting
 
-Første registrering krever gjennomgang av koden og Dockerfile. Dette er en sandkasse for kjente deltakere med betrodd skrivetilgang, ikke en tjeneste for å kjøre vilkårlig fiendtlig kode. Containerbygg skjer fortsatt på den delte VPS-en, serialisert med andre deployer; store bygg bør flyttes til egne byggemaskiner før videre skalering.
+You can use a Node.js or Docker host of your choice. The production server serves the UI and API together and exposes `GET /health`. It uses `PORT` (default 3000) and `HOST` (default loopback); the Docker image listens on port 3000 inside its container. Keep configuration and credentials in the host's environment settings.
 
-Persistent lagring, databaseendringer og ekstra bakgrunnstjenester er operatøroppgaver. `/tmp` er liten og midlertidig. Appen kan kun kontakte den delte test-PDS-en gjennom en fast proxy; annen utgående trafikk må avtales.
+GitHub Actions runs checks for pushes to `main` and pull requests. The included hackathon deployment job stays disabled in a new repository until hosting is configured. Creating a repository or pushing code alone does not publish an app.
 
-## Tilgang og publisering
-
-HTTPS er privat gjennom Tailscale, selv om DNS-navnet kan slås opp offentlig. Det er en separat test-PDS med egne data, nøkler og invitasjoner. Se [PDS-integrasjon](integrations.md).
-
-Offentlig tilgang er en **egen operatørendring** i den eksisterende offentlige gatewayen og DNS, ikke et flagg deltakeren kan sette i repoet. [Publiseringsprosedyre](public-apps.md). Automatisk offentlig publisering inngår ikke i denne versjonen.
+For help with the hackathon VPS, give Edvin your repository link and describe your app's services and storage needs. The shared environment currently requires Tailscale access. Public hosting and ongoing hosting after the event need to be arranged separately.

@@ -42,11 +42,13 @@ function App() {
       );
       const data = await response.json();
       if (!response.ok)
-        throw new Error(data.error ?? "Kunne ikke nå API-et. Prøv igjen.");
+        throw new Error(data.error ?? "Could not reach the API. Try again.");
       setMessage(data.message);
     } catch (error) {
       setMessage(
-        error instanceof Error ? error.message : "Noe gikk galt. Prøv igjen.",
+        error instanceof Error
+          ? error.message
+          : "Something went wrong. Try again.",
       );
     } finally {
       setBusy(false);
@@ -55,42 +57,43 @@ function App() {
   return (
     <>
       <header>
-        <a className="brand" href="/" aria-label="App Protospace, forsiden">
+        <a className="brand" href="/" aria-label="App Protospace, home">
           <span className="brand-mark">L</span>
           <span>
             demokratiløftet<span className="brand-sub">APP PROTOSPACE</span>
           </span>
         </a>
         <a className="repo-link" href={repo}>
-          Se koden <span aria-hidden="true">↗</span>
+          View the code <span aria-hidden="true">↗</span>
         </a>
       </header>
       <main>
         <section className="hero">
           <div className="eyebrow">
-            <span className="dot" /> ROM FOR Å PRØVE
+            <span className="dot" /> ROOM TO EXPERIMENT
           </div>
           <h1>
-            En liten idé.
-            <br />
-            En kjørende <em>app.</em>
+            Your idea.
+            <br />A running <em>app.</em>
           </h1>
           <p className="intro">
-            Velkommen til Løftets utviklingssandkasse. Her er det kort vei fra
-            «hva om» til noe vi kan prøve sammen.
+            A starting point for your AT Protocol app. Build with React and
+            Node.js, connect a PDS, and experiment with shared records.
           </p>
           <a className="primary" href={`${repo}/generate`}>
-            Lag din egen app <span aria-hidden="true">↗</span>
+            Create your app <span aria-hidden="true">↗</span>
           </a>
-          <a className="text-link" href={`${repo}#kom-i-gang`}>
-            Les oppstartsveiledningen <span aria-hidden="true">→</span>
+          <a className="text-link" href={`${repo}/blob/main/docs/HACKATHON.md`}>
+            Read the hackathon guide <span aria-hidden="true">→</span>
           </a>
           <div className="hero-note">
             {pds === "ready"
-              ? "Felles test-PDS er tilkoblet. Klar for AT Protocol-eksperimenter."
+              ? "PDS is reachable. Run pnpm pds:demo with a test account to try a real record."
               : pds === "error"
-                ? "Test-PDS svarer ikke. Du kan fortsatt bygge og bruke appen."
-                : "Bygg lokalt. Del med teamet. Utvikle videre."}
+                ? "Could not reach the PDS. Check PDS_URL and your network, then reload."
+                : pds === "local"
+                  ? "PDS not configured. Add PDS_URL to .env and restart pnpm dev to connect one."
+                  : "Checking PDS connection…"}
           </div>
         </section>
         <section className="demo" aria-labelledby="demo-title">
@@ -99,24 +102,24 @@ function App() {
             <span className={`status ${health}`}>
               <span className="dot" />
               {health === "ok"
-                ? "API-et er klart"
+                ? "API is ready"
                 : health === "error"
-                  ? "API-et svarer ikke"
-                  : "Sjekker API-et"}
+                  ? "API is unavailable"
+                  : "Checking API"}
             </span>
           </div>
           <div className="demo-body">
             <span className="hello-art" aria-hidden="true">
-              hei<span>↗</span>
+              hi<span>↗</span>
             </span>
-            <h2 id="demo-title">Prøv den første forbindelsen.</h2>
+            <h2 id="demo-title">Try your local API.</h2>
             <p>
-              Send en hilsen fra nettleseren til API-et. Et lite utgangspunkt
-              for det du vil bygge.
+              Send a greeting from your browser to the Node API. This local
+              example does not write to a PDS or require an account.
             </p>
             <form onSubmit={greet}>
               <label htmlFor="name">
-                Hva heter du? <span>(valgfritt)</span>
+                Your name <span>(optional)</span>
               </label>
               <div className="input-row">
                 <input
@@ -124,12 +127,12 @@ function App() {
                   name="name"
                   autoComplete="given-name"
                   maxLength={80}
-                  placeholder="Ditt fornavn"
+                  placeholder="First name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
                 <button disabled={busy} type="submit">
-                  {busy ? "Sender …" : "Si hei"}{" "}
+                  {busy ? "Sending …" : "Say hello"}{" "}
                   <span aria-hidden="true">→</span>
                 </button>
               </div>
@@ -138,30 +141,30 @@ function App() {
               className={`reply ${message ? "answered" : ""}`}
               aria-live="polite"
             >
-              {message || "Svaret fra API-et dukker opp her."}
+              {message || "The API response will appear here."}
             </div>
           </div>
           <div className="demo-bottom">
             <span>React + TypeScript + Node.js</span>
-            <span>DIN STARTMAL</span>
+            <span>YOUR STARTER TEMPLATE</span>
           </div>
         </section>
-        <section className="steps" aria-label="Fra idé til prototype">
+        <section className="steps" aria-label="From idea to prototype">
           {[
             [
               "01",
-              "Gjør den til din.",
-              "Opprett et repo fra malen. Start lokalt og bytt ut denne siden med din idé.",
+              "Make it yours.",
+              "Create a repository from the template. Run it locally and replace this page with your idea.",
             ],
             [
               "02",
-              "Bygg noe sammen.",
-              "Legg til en visning, et API eller en integrasjon. Test og del endringen i GitHub.",
+              "Try AT Protocol.",
+              "Choose a PDS and a test account. The record example writes, reads and removes a note; adapt it to your idea.",
             ],
             [
               "03",
-              "La andre prøve.",
-              "Registrer appen hos driftsansvarlig. Godkjent kode deployes til teamets sandkasse.",
+              "Share a running app.",
+              "Build in your own repository, invite your teammates, and host where you prefer. Ask Edvin if you want help with hackathon hosting.",
             ],
           ].map(([number, title, text]) => (
             <article key={number}>
@@ -174,10 +177,10 @@ function App() {
       </main>
       <footer>
         <span>
-          Demokratiløftet <span className="footer-separator">/</span> Et sted å
-          begynne.
+          Demokratiløftet <span className="footer-separator">/</span> A place to
+          start.
         </span>
-        <a href={`${repo}/blob/main/CONTRIBUTING.md`}>Bidra til sandkassen ↗</a>
+        <a href={`${repo}/blob/main/CONTRIBUTING.md`}>Contribute ↗</a>
       </footer>
     </>
   );

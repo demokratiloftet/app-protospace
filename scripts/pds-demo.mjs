@@ -1,6 +1,24 @@
 // A synthetic write/read/delete smoke test. No administrator access is needed.
 // Use a separate demo account/app password; never print session credentials.
 import { randomUUID } from "node:crypto";
+const base = process.env.PDS_URL;
+if (!base)
+  throw new Error(
+    "Set PDS_URL in .env to your account's PDS. See docs/integrations.md.",
+  );
+const pds = new URL(base);
+if (
+  pds.username ||
+  pds.password ||
+  (pds.protocol !== "https:" &&
+    !(
+      pds.protocol === "http:" &&
+      ["localhost", "127.0.0.1", "[::1]"].includes(pds.hostname)
+    ))
+)
+  throw new Error(
+    "Use HTTPS for PDS_URL (HTTP is allowed only for a local PDS).",
+  );
 let credentials;
 if (process.argv.includes("--stdin")) {
   let input = "";
@@ -12,7 +30,6 @@ if (process.argv.includes("--stdin")) {
     password: process.env.PDS_APP_PASSWORD,
   };
 }
-const base = process.env.PDS_URL ?? "https://pds.hackaton.demokratiloftet.no";
 if (!credentials.identifier || !credentials.password)
   throw new Error(
     "Set PDS_IDENTIFIER and PDS_APP_PASSWORD (a demo account, never PDS admin credentials).",
@@ -34,6 +51,12 @@ async function rpc(method, body, token) {
 const session = await rpc("com.atproto.server.createSession", credentials);
 const collection = "no.demokratiloftet.hackathon.note";
 const rkey = randomUUID();
+const value = {
+  $type: collection,
+  text: "Hello from App Protospace",
+  createdAt: new Date().toISOString(),
+};
+let written = false;
 try {
   const record = await rpc(
     "com.atproto.repo.putRecord",
@@ -42,14 +65,11 @@ try {
       collection,
       rkey,
       validate: false,
-      record: {
-        $type: collection,
-        text: "Hello from App Protospace",
-        createdAt: new Date().toISOString(),
-      },
+      record: value,
     },
     session.accessJwt,
   );
+  written = true;
   const url = new URL("/xrpc/com.atproto.repo.getRecord", base);
   url.search = new URLSearchParams({
     repo: session.did,
@@ -60,14 +80,24 @@ try {
     signal: AbortSignal.timeout(10000),
     redirect: "error",
   });
-  if (!read.ok || (await read.json()).uri !== record.uri)
+  if (!read.ok)
+    throw new Error(`PDS read verification failed: HTTP ${read.status}`);
+  const result = await read.json();
+  if (
+    result.uri !== record.uri ||
+    result.value?.$type !== value.$type ||
+    result.value?.text !== value.text ||
+    result.value?.createdAt !== value.createdAt
+  )
     throw new Error("PDS read verification failed");
-  console.log(`PDS write/read verified for ${session.did}`);
+  console.log(`PDS write/read verified: ${record.uri}`);
 } finally {
-  await rpc(
-    "com.atproto.repo.deleteRecord",
-    { repo: session.did, collection, rkey },
-    session.accessJwt,
-  );
-  console.log("Synthetic record removed.");
+  if (written) {
+    await rpc(
+      "com.atproto.repo.deleteRecord",
+      { repo: session.did, collection, rkey },
+      session.accessJwt,
+    );
+    console.log("Synthetic record removed.");
+  }
 }

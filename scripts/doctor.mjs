@@ -1,6 +1,6 @@
 import { spawnSync } from "node:child_process";
-const major = Number(process.versions.node.split(".")[0]);
-let failed = major !== 24;
+const [major, minor] = process.versions.node.split(".").map(Number);
+let failed = major !== 24 || minor < 17;
 console.log(
   `${failed ? "FAIL" : "OK"} Node ${process.versions.node} (use .node-version)`,
 );

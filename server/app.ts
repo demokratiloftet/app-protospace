@@ -42,14 +42,15 @@ export function createApp(
         const name = (url.searchParams.get("name") ?? "").trim();
         if (name.length > 80 || /[\u0000-\u001f\u007f]/u.test(name)) {
           json(400, {
-            error: "Bruk et navn på maks 80 tegn uten kontrolltegn.",
+            error:
+              "Use a name of up to 80 characters without control characters.",
           });
           return;
         }
         json(200, {
           message: name
-            ? `Hei, ${name}! Din første API-forespørsel er i mål.`
-            : "Hei fra Løftet! Appen og API-et snakker sammen.",
+            ? `Hello, ${name}! Your first API request is complete.`
+            : "Hello from Løftet! Your app and API are connected.",
           app: options.appName ?? "Hello Løftet",
           revision: options.revision ?? "local",
         });
